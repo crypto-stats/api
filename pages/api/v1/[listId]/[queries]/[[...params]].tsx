@@ -1,10 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { Adapter } from '@cryptostats/sdk'
-import sdk from 'data/sdk'
+import { getSDK } from 'data/sdk'
 
 // /api/v1/apy/currentAPY,averageAPY3Day/0x1234
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
+    const sdk = getSDK()
     const { listId, queries, params } = req.query
 
     const list = sdk.getList(listId.toString())
