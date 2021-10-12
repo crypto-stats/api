@@ -11,8 +11,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const list = sdk.getList(listId.toString())
     await list.fetchAdapters()
 
-    const queryList = Array.isArray(queries) ? queries : [queries]
-    const paramList = Array.isArray(params) ? params : [params]
+    const queryList = queries.toString().split(',')
+    const paramList = params.toString().split(',')
 
     const data = await Promise.all(list.getAdapters().map(async (adapter: Adapter) => {
       const [metadata, ...resultsList] = await Promise.all([
