@@ -12,7 +12,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     await list.fetchAdapters()
 
     const queryList = queries.toString().split(',')
-    const paramList = params.toString().split(',')
+    const paramList = params ? params.toString().split(',') : []
 
     const data = await Promise.all(list.getAdapters().map(async (adapter: Adapter) => {
       const [metadata, ...resultsList] = await Promise.all([
