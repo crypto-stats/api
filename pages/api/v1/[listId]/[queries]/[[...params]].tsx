@@ -42,6 +42,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     console.error(e)
     res.status(500).json({
       success: false,
+      error: e.message,
     })
   }
 }
