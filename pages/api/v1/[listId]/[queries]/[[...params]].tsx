@@ -4,6 +4,17 @@ import { getSDK } from 'data/sdk'
 
 // /api/v1/apy/currentAPY,averageAPY3Day/0x1234
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  )
+
+  if (req.method == 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET')
+    return res.status(200).end(null)
+  }
+
   try {
     const sdk = getSDK()
     const { listId, queries, params } = req.query
