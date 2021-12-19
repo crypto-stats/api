@@ -17,7 +17,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     const sdk = getSDK()
-    const { listId, queries, params } = req.query
+    const { listId, queries, params, metadata: includeMetadata } = req.query
 
     const list = sdk.getList(listId.toString())
     await list.fetchAdapters()
@@ -27,8 +27,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const data = await Promise.all(list.getAdapters().map(async (adapter: Adapter) => {
       const [metadata, ...resultsList] = await Promise.all([
-        adapter.getMetadata(),
-        ...queryList.map(query => adapter.query(query, ...paramList)),
+        includeMetadata === 'false' ? Promise.resolve(null) : adapter.getMetadata(),
+        ...queryList.map(query => adapter.query(query, ...paramList, { allowMissingQuery: true } )),
       ])
 
       const results: { [query: string]: any } = {}
@@ -38,9 +38,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       return {
         id: adapter.id,
+        bundle: adapter.bundle,
         results,
         metadata,
-        // bundle,
       }
     }))
 
