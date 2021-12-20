@@ -28,20 +28,36 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const data = await Promise.all(list.getAdapters().map(async (adapter: Adapter) => {
       const [metadata, ...resultsList] = await Promise.all([
         includeMetadata === 'false' ? Promise.resolve(null) : adapter.getMetadata(),
-        ...queryList.map(query => adapter.query(query, ...paramList, { allowMissingQuery: true } )),
+        ...queryList.map(query => adapter.query(query, ...paramList, { allowMissingQuery: true } )
+          .catch((e: Error) => ({ error: e.message }))
+        ),
       ])
 
       const results: { [query: string]: any } = {}
+      const errors: { [query: string]: any } = {}
+
       queryList.forEach((type: string, index: number) => {
-        results[type] = resultsList[index]
+        const result = resultsList[index]
+        if (result.error) {
+          results[type] = null
+          errors[type] = result.error
+        } else {
+          results[type] = result
+        }
       });
 
-      return {
+      const result: any = {
         id: adapter.id,
         bundle: adapter.bundle,
         results,
         metadata,
       }
+
+      if (Object.values(errors).length > 0) {
+        result.errors = errors
+      }
+
+      return result
     }))
 
     res.setHeader('Cache-Control', `max-age=0, s-maxage=${60}`);
