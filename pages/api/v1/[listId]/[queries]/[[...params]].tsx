@@ -38,7 +38,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       queryList.forEach((type: string, index: number) => {
         const result = resultsList[index]
-        if (result.error) {
+        if (result?.error) {
           results[type] = null
           errors[type] = result.error
         } else {
