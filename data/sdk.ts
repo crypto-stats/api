@@ -7,13 +7,19 @@ export function getSDK() {
     moralisKey: process.env.MORALIS_KEY,
   })
 
-  sdk.getList('fees').setCacheKeyResolver((_id: string, query: string, params: string[]) =>
+  sdk.getCollection('fees').setCacheKeyResolver((_id: string, query: string, params: string[]) =>
     query === 'oneDayTotalFees' ? params[0] : null
   );
 
-  sdk.getList('fees-range').setCacheKeyResolver((_id: string, query: string, params: string[]) =>
+  sdk.getCollection('fees-range').setCacheKeyResolver((_id: string, query: string, params: string[]) =>
     query === 'dateRangeTotalFees' && params.length == 2 ? `${params[0]}-${params[1]}` : null
   );
+
+  sdk
+    .getCollection('rollup-l1-fees')
+    .setCacheKeyResolver((_id: string, query: string, params: string[]) =>
+      query === 'oneDayFeesPaidUSD' ? params[0] : null
+    );
 
   return sdk
 }

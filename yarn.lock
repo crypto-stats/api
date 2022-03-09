@@ -50,10 +50,10 @@
     "@babel/helper-validator-identifier" "^7.14.9"
     to-fast-properties "^2.0.0"
 
-"@cryptostats/sdk@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@cryptostats/sdk/-/sdk-0.2.1.tgz#e9c1cf58aa84cca90af7d03c25f338578866fb8b"
-  integrity sha512-6d59b6dk7bTGafqbDsjAa/UkBcJ/qF3+51AEU+haU+C381N9NramtguiZbvz/zbQje6S8ZtWaN1bmo/syANiPA==
+"@cryptostats/sdk@^0.2.10":
+  version "0.2.10"
+  resolved "https://registry.yarnpkg.com/@cryptostats/sdk/-/sdk-0.2.10.tgz#53d11086b447ee9fbe46c8f7ab25aa9d33afe3ea"
+  integrity sha512-yJc8jmzjQbQQ512fTmIbvdxIBHDZKCg8Naz77QswxQ0F+x1Ttq7f8GAsxqCXc/85nX/Nu74QK4PVN384gZHlWQ==
   dependencies:
     date-fns "^2.22.1"
     ethers "^5.4.4"
