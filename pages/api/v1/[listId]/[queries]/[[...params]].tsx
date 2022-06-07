@@ -2,6 +2,13 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { Adapter } from '@cryptostats/sdk'
 import { getSDK } from 'data/sdk'
 
+const TIMEOUT_AMOUNT = 5000
+
+const timeout = <T,>(promise: Promise<T>) => Promise.race([
+  promise,
+  new Promise((_, reject) => setTimeout(() => reject(new Error('Execution timed out')), TIMEOUT_AMOUNT)),
+])
+
 // /api/v1/apy/currentAPY,averageAPY3Day/0x1234
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -19,7 +26,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const sdk = getSDK()
     const { listId, queries, params, metadata: includeMetadata } = req.query
 
-    const list = sdk.getList(listId.toString())
+    const list = sdk.getCollection(listId.toString())
     await list.fetchAdapters()
 
     const queryList = queries.toString().split(',')
@@ -28,7 +35,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const data = await Promise.all(list.getAdapters().map(async (adapter: Adapter) => {
       const [metadata, ...resultsList] = await Promise.all([
         includeMetadata === 'false' ? Promise.resolve(null) : adapter.getMetadata(),
-        ...queryList.map(query => adapter.query(query, ...paramList, { allowMissingQuery: true } )
+        ...queryList.map(query => timeout(adapter.query(query, ...paramList, { allowMissingQuery: true } ))
           .catch((e: Error) => ({ error: e.message }))
         ),
       ])
@@ -37,7 +44,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const errors: { [query: string]: any } = {}
 
       queryList.forEach((type: string, index: number) => {
-        const result = resultsList[index]
+        const result = resultsList[index] as any
         if (result?.error) {
           results[type] = null
           errors[type] = result.error

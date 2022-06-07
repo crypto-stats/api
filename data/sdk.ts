@@ -5,6 +5,7 @@ export function getSDK() {
     mongoConnectionString: process.env.MONGO_CONNECTION_STRING,
     redisConnectionString: process.env.REDIS_URL,
     moralisKey: process.env.MORALIS_KEY,
+    executionTimeout: 60,
   })
 
   sdk.getCollection('fees').setCacheKeyResolver((_id: string, query: string, params: string[]) =>
