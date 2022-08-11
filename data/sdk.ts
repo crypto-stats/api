@@ -15,6 +15,10 @@ export function getSDK() {
     console.error('Alchemy key not set');
   }
 
+  sdk.getCollection('bridged-value').setCacheKeyResolver((_id: string, query: string) =>
+    query === 'currentValueLocked' ? Math.floor(Date.now() / 1000 / 60 / 60).toString() : null,
+  );
+
   sdk.getCollection('fees').setCacheKeyResolver((_id: string, query: string, params: string[]) =>
     query === 'oneDayTotalFees' ? params[0] : null
   );
